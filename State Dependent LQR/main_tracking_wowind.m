@@ -29,7 +29,8 @@ params.G=G;
 params.W=W;
 params.gaama=0;  %this is highest
 vw_bar=[2.72,1.752,0.0006];
-params.meanvel=vw_bar;
+v_zero=[0,0,0];
+params.meanvel=v_zero;
 %Constant wind
 % wind =[0,0,-2];
 % params.meanvel=wind;%[0;0;0];%WE DONT KNOW WIND
@@ -38,7 +39,7 @@ params.D=[0.218,0,0;
          0 , 0, 0.004];
      
 params.u0 = [0;0;0.02;7];  
-params.x0 = [0;0;0;1;0;0;0;-params.meanvel.']';
+params.x0 = [0;0;12;1;0;0;0;-params.meanvel.']';
 params.xref=[0;0;12;1;0;0;0;-params.meanvel.']';
 
 params.m=1.035 * 4/6; 
@@ -161,13 +162,14 @@ if iter==1
 else
     prev_u=uu(end-4,:);
 end
-xdes=getref(t,nomTraj);
+% xdes=getref(t,nomTraj);
+xdes=params.xref;
 y;
 [A,B] = deriveLinSys_wowind(y,prev_u,params);
 K_now = lqr(A,B,params.Q,params.R);
 kk=[kk;norm(K_now)];
 x(8:10)=x(8:10)+params.meanvel.';%updating to track the ground velocity;
-u =params.u0 - K_now*(x-xdes');
+ u =params.u0 - K_now*(x-xdes');
 
 end
 
@@ -235,7 +237,7 @@ cn = [0;0;u(4)];
 % W=  params.W;
 % noise=G*chol(W)*G'*rand(10,1);
 
-dp=double(v)+wind_vel_next';
+dp=double(v);%+wind_vel_next';
 dq = double(0.5*quater_mult(q)*[0;wn]);
 dvc = double([0;0;params.m*params.g] + quater_rot(q)*cn);
 R=quater_rot(q);

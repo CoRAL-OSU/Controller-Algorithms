@@ -42,14 +42,14 @@ params.m=1.035 * 4/6;
 params.rho=1.15; 
 params.u0 = [0;0;0.02;7]; 
 params.x0 = [0;0;0;1;0;0;0;-params.meanvel.']';
-% params.xref=[0;0;12;1;0;0;0;-params.meanvel.']';
+params.xref=[0;0;12;1;0;0;0;-params.meanvel.']';
 
 
 
 %% find initial gain value
-% [A,B]=deriveLinSys(params.xref,params.u0,params);
-% K0=lqr(A,B,params.Q,params.R);
-% params.K=K0;
+[A,B]=deriveLinSys(params.xref,params.u0,params);
+K0=lqr(A,B,params.Q,params.R);
+params.K=K0;
 %% Data Preparation from Trajectory files
  
  traj_pts=traj_nom(1:end,:);
@@ -66,8 +66,8 @@ t0=0;
 nomTraj=[t_nom, traj_nom];
 final_time=t_nom(end);
 
-Tf=110; %total time
-dt=0.01; 
+Tf=80; %total time
+dt=0.1; 
 X=params.x0;
 params.wind=wind;
 sim_num=1;
@@ -86,7 +86,7 @@ end
 %% input data collect only for single run
 u_set=uu(1:4:end,:);
 gain_set=kk(1:4:end,:);
-data_set=[data_set,u_set,gain_set];
+data_set=[data_set,u_set];
 
 
 %% plot trajectory
